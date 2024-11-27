@@ -1,0 +1,26 @@
+<%- include('layout', { 
+  title: 'SubwayWeather: Signup', 
+  content: `
+  <form action="/login" method="POST">
+    <fieldset>
+      <legend>아이디와 비밀번호를 정확하게 입력하세요.</legend>
+      <div class="field">
+        <label>아이디:</label>
+        <input type="text" name="username" required autofocus>
+      </div>
+      <div class="field">
+        <label>비밀번호:</label>
+        <input type="password" name="password" placeholder="6자리 이상 입력" minlength="6" required>
+      </div>
+      <div class="button">
+        <button type="submit"><span>로그인</span></button>
+        <a href="/signup" class="signup">회원가입</a>
+      </div>
+    </fieldset>
+  </form>
+  `
+}) %>
+
+<% if (error) { %>
+  <script>alert("<%= error %>");</script>
+<% } %>

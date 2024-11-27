@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SubwayWeather:Main</title>
+    <link rel="stylesheet" href="css/mainStyle.css">
+  </head>
+  <body>
+    <header>
+      <h1>SubwayWeather</h1>
+    </header>
+    <nav>
+      <a href="login.html" class="nav-link">로그아웃</a>
+      <a href="favorites.html" class="nav-link">즐겨찾기</a>
+    </nav>
+    <section id="slideImage">
+      <div class="slideshow">
+        <img src="image/main1.png" alt="지하철 역" class="slide">
+        <img src="image/main2.png" alt="우산" class="slide">
+      </div>
+    </section>
+    <section id="search">
+      <h2>출발역과 도착역을 입력하세요</h2>
+      <form action="/result" method="GET">
+        <label for="departure">출발역:</label>
+        <input type="text" id="departure" name="departure" required>
+        <label for="arrival">도착역:</label>
+        <input type="text" id="arrival" name="arrival" required>
+        <button type="submit">조회</button>
+      </form>
+    </section>
+    <section id="Lane">
+      <h2>노선도</h2>
+      <div class="lane-container">
+        <a href="#laneN" class="lane-link"><img src="image/laneN.png" alt="노선N" class="lane-image"></a>
+        <a href="#lane7" class="lane-link"><img src="image/lane7.png" alt="노선7" class="lane-image"></a>
+      </div>
+    </section>
+    <div id="laneN" class="lightbox">
+      <a href="#" class="close">&times;</a>
+      <img src="image/laneN.png" alt="노선N 확대">
+    </div>
+    <div id="lane7" class="lightbox">
+      <a href="#" class="close">&times;</a>
+      <img src="image/lane7.png" alt="노선7 확대">
+    </div>
+    <footer>
+      <p>weather API by <a href="https://www.data.go.kr/" target="_blank">공공 데이터포털</a></p>
+      <p>subway API by <a href="https://data.seoul.go.kr/" target="_blank">서울 열린데이터 광장</a></p>
+    </footer>
+  </body>
+</html>

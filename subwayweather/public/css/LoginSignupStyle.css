@@ -1,0 +1,110 @@
+h1 {
+  padding: 10px;
+  text-align: center;
+  background-color: darkgreen;
+  color: aliceblue;
+}
+
+form {
+  width: 90%;
+  max-width: 500px;
+  margin: 10px auto;
+  padding: 10px;
+  border: 1px solid #000;
+  background-color: rgb(239, 228, 75);
+}
+
+fieldset {
+  border: 1px solid #ddd;
+  margin-bottom: 20px;
+  padding: 20px;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+legend {
+  font-weight: bold;
+  font-size: 18px;
+  padding: 0 10px;
+  color: darkgreen;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 15px;
+}
+
+label {
+  margin-right: 10px;
+  font-size: 15px;
+  width: 30%;
+  text-align: left;
+}
+
+input {
+  width: 65%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 15px;
+}
+
+button {
+  background-color: darkgreen;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.buttonSignup {
+  text-align: center;
+  margin-top: 20px;
+}
+
+button:hover {
+  background-color: rgb(11, 111, 11);
+}
+
+@media (max-width: 768px) {
+  .field {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  label {
+    width: 100%;
+    text-align: left;
+    margin-bottom: 5px;
+  }
+
+  input {
+    width: 100%;
+  }
+
+  button {
+    width: 100%;
+  }
+}
+
+footer {
+  text-align: center;
+  margin-top: 25px;
+  font-size: 11px;
+  color: #000;
+}
+
+footer a {
+  color: blue;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
