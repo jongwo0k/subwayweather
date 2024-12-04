@@ -9,6 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %></title>
   <link rel="stylesheet" href="/css/mainStyle.css">
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
   <header>
@@ -18,6 +19,7 @@
       <a href="/favorites" class="nav-link">즐겨찾기</a>
     </nav>
   </header>
+
   <section id="slideImage">
     <div class="slideshow">
       <img src="/image/main1.png" alt="지하철 역" class="slide">
@@ -27,30 +29,120 @@
   
   <section id="search">
     <h2>출발역과 도착역을 입력하세요</h2>
-    <form action="/result" method="GET">
+    <form id="search-form">
       <label for="departure">출발역:</label>
       <input type="text" id="departure" name="departure" required>
+      <input type="number" min="1" max="8" id="departure-line" name="departure-line" required>호선
       <label for="arrival">도착역:</label>
       <input type="text" id="arrival" name="arrival" required>
+      <label for="transferStation">환승역:</label>
+      <input type="text" id="transferStation" name="transferStation">
       <button type="submit">조회</button>
     </form>
   </section>
-  
-  <section id="Lane">
-    <h2>노선도</h2>
-    <div class="lane-container">
-      <a href="#laneN" class="lane-link"><img src="/image/laneN.png" alt="노선N" class="lane-image"></a>
-      <a href="#lane7" class="lane-link"><img src="/image/lane7.png" alt="노선7" class="lane-image"></a>
-    </div>
-  </section>
-  
-  <div id="laneN" class="lightbox">
+
+  <section id="results" style="display: none;">
+  <h2>결과</h2>
+
+  <!-- 출발역 실시간 도착 정보 -->
+  <div id="subway-results">
+    <h3>출발역 지하철 도착 정보</h3>
+    <ul id="subway-info-list"></ul>
+  </div>
+
+  <!-- 도착역 예상 도착 시간 -->
+  <div id="arrival-results">
+    <h3>도착역 예상 도착 시간</h3>
+    <p>예상 도착 시간: <span id="expected-time"></span></p>
+  </div>
+
+  <!-- 도착역 날씨 정보 -->
+  <div id="weather-results">
+    <h3>도착역 날씨 정보</h3>
+    <p>온도: <span id="temperature"></span>°C</p>
+    <p>날씨: <span id="weather-condition"></span></p>
+  </div>
+</section>
+
+  <script>
+    const form = document.getElementById('search-form');
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const departure = document.getElementById('departure').value.trim();
+      const arrival = document.getElementById('arrival').value.trim();
+
+      try {
+        const response = await axios.get(`/apiData/${departure}/${arrival}`);
+        const { weather, subway, expectedArrivalTime } = response.data;
+
+        // 날씨 정보 업데이트
+        document.getElementById('temperature').textContent = weather.temperature || 'N/A';
+        document.getElementById('weather-condition').textContent = weather.isRaining ? '🌧️ 비' : '☀️ 맑음';
+
+        // 출발역 지하철 도착 정보 업데이트
+        const subwayInfoList = document.getElementById('subway-info-list');
+        subwayInfoList.innerHTML = subway.map(train => `
+          <li>${train.trainLine} - ${train.destination} - ${train.arrivalTime}</li>
+        `).join('');
+
+        // 도착역 예상 도착 시간 업데이트
+        document.getElementById('expected-time').textContent = expectedArrivalTime || 'N/A';
+
+        // 결과 섹션 표시
+        document.getElementById('results').style.display = 'block';
+      } catch (error) {
+        alert('데이터를 가져오는 데 실패했습니다. 다시 시도해주세요.');
+        console.error(error);
+      }
+    });
+  </script>
+
+<section id="Lane">
+  <h2>노선도</h2>
+  <div class="lane-container">
+    <a href="#lane1" class="lane-link"><img src="/image/lane1.png" alt="1호선" class="lane-image"></a>
+    <a href="#lane2" class="lane-link"><img src="/image/lane2.png" alt="2호선" class="lane-image"></a>
+    <a href="#lane3" class="lane-link"><img src="/image/lane3.png" alt="3호선" class="lane-image"></a>
+    <a href="#lane4" class="lane-link"><img src="/image/lane4.png" alt="4호선" class="lane-image"></a>
+    <a href="#lane5" class="lane-link"><img src="/image/lane5.png" alt="5호선" class="lane-image"></a>
+    <a href="#lane6" class="lane-link"><img src="/image/lane6.png" alt="6호선" class="lane-image"></a>
+    <a href="#lane7" class="lane-link"><img src="/image/lane7.png" alt="7호선" class="lane-image"></a>
+    <a href="#lane8" class="lane-link"><img src="/image/lane8.png" alt="8호선" class="lane-image"></a>
+  </div>
+</section>
+
+  <div id="lane1" class="lightbox">
     <a href="#" class="close">&times;</a>
-    <img src="/image/laneN.png" alt="노선N 확대">
+    <img src="/image/lane1.png" alt="1호선 확대">
+  </div>
+  <div id="lane2" class="lightbox">
+    <a href="#" class="close">&times;</a>
+    <img src="/image/lane2.png" alt="2호선 확대">
+  </div>
+  <div id="lane3" class="lightbox">
+    <a href="#" class="close">&times;</a>
+    <img src="/image/lane3.png" alt="3호선 확대">
+  </div>
+  <div id="lane4" class="lightbox">
+    <a href="#" class="close">&times;</a>
+    <img src="/image/lane4.png" alt="4호선 확대">
+  </div>
+  <div id="lane5" class="lightbox">
+    <a href="#" class="close">&times;</a>
+    <img src="/image/lane5.png" alt="5호선 확대">
+  </div>
+  <div id="lane6" class="lightbox">
+    <a href="#" class="close">&times;</a>
+    <img src="/image/lane6.png" alt="6호선 확대">
   </div>
   <div id="lane7" class="lightbox">
     <a href="#" class="close">&times;</a>
-    <img src="/image/lane7.png" alt="노선7 확대">
+    <img src="/image/lane7.png" alt="7호선 확대">
+  </div>
+  <div id="lane8" class="lightbox">
+    <a href="#" class="close">&times;</a>
+    <img src="/image/lane8.png" alt="8호선 확대">
   </div>
 
   <footer>
@@ -59,6 +151,7 @@
   </footer>
 </body>
 </html>
+
 
 <% if (error) { %>
   <script>alert("<%= error %>");</script>
