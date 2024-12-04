@@ -1,25 +1,34 @@
 const express = require('express');
 const router = express.Router();
 const { getWeather } = require('../controllers/weatherController');
-const { getSubwayData } = require('../controllers/subwayController');
+const { calculateTravelTime } = require('../controllers/TimeController');
+const { getRealTimeSubwayInfo } = require('../controllers/realTimeController');
 
-// API통합 데이터
-router.get('/:station', async (req, res) => {
-    const station = req.params.station;
+// API 통합 데이터
+router.get('/:departure/:departureLine/:arrival/:transfer?', async (req, res) => {
+    const { departure, departureLine, arrival, transfer } = req.params;
+
+    console.log(`API 요청: 출발역=${departure}, 출발호선=${departureLine}, 도착역=${arrival}, 환승역=${transfer || '없음'}`);
 
     try {
-        const [weather, subway] = await Promise.all([
-            getWeather(),
-            getSubwayData(station)
-        ]);
+        // 실시간 도착 정보
+        const subway = await getRealTimeSubwayInfo(departure);
 
-        res.json({
-            weather,
-            subway
-        });
+        // 소요시간 계산
+        const travelTime = await calculateTravelTime(departure, departureLine, arrival, transfer);
+
+        // 예상 도착 시간 계산
+        const now = new Date();
+        const arrivalTime = new Date(now.getTime() + travelTime * 1000).toLocaleTimeString();
+
+        // 도착 시간 기준 날씨 데이터
+        const weather = await getWeather(arrival, arrivalTime);
+
+        // 결과 반환
+        res.json({ subway, travelTime, arrivalTime, weather });
     } catch (error) {
-        console.error("Error fetching data:", error);
-        res.status(500).send("Failed to fetch data");
+        console.error('API 데이터 처리 중 오류:', error.message);
+        res.status(500).json({ error: '데이터를 처리하는 중 오류가 발생했습니다.' });
     }
 });
 
