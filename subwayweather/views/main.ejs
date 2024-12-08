@@ -9,149 +9,243 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %></title>
   <link rel="stylesheet" href="/css/mainStyle.css">
+  <!-- axios cdn서버 사용 -->
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
   <header>
     <h1>SubwayWeather</h1>
-    <nav>
-      <a href="/logout" class="nav-link">로그아웃</a>
-      <a href="/favorites" class="nav-link">즐겨찾기</a>
+    <nav class="nav-main">
+      <div class="nav-left">
+        <a href="/logout" class="nav-link">로그아웃</a>
+        <button id="updateFormButton">회원정보 수정</button>
+      </div>
+      <div class="nav-right"> 
+        <button id="deleteAccountButton">회원 탈퇴</button>
+      </div>
     </nav>
   </header>
-
-  <section id="slideImage">
-    <div class="slideshow">
-      <img src="/image/main1.png" alt="지하철 역" class="slide">
-      <img src="/image/main2.png" alt="우산" class="slide">
+  <main>
+    <section id="update-section" style="display: none;">
+      <h2>회원정보 수정</h2>
+      <form id="updateForm">
+        <label for="currentPassword">현재 비밀번호:</label>
+        <input type="password" id="currentPassword" name="currentPassword">
+        <label for="newPassword">새로운 비밀번호:</label>
+        <input type="password" id="newPassword" name="newPassword">
+        <label for="confirmNewPassword">비밀번호 확인:</label>
+        <input type="password" id="confirmNewPassword" name="confirmNewPassword">
+        <button type="submit">변경</button>
+        <button type="button" id="cancelUpdate">취소</button>
+      </form>
+    </section>
+    <section id="slideImage">
+      <div class="slideshow">
+        <img src="/image/main1.png" alt="지하철 역" class="slide">
+        <img src="/image/main2.png" alt="우산" class="slide">
+      </div>
+    </section> 
+    <section id="search">
+      <h2>출발역과 도착역을 입력하세요</h2>
+        <form id="search-form">
+          <label for="departure">출발역:</label>
+          <input type="text" id="departure" name="departure" required>
+          <input type="number" min="1" max="8" id="departure-line" name="departure-line" required>호선
+          <label for="arrival">도착역:</label>
+          <input type="text" id="arrival" name="arrival" required>
+          <label for="transferStation">환승역:</label>
+          <input type="text" id="transferStation" name="transferStation">
+          <button type="submit">조회</button>
+        </form>
+    </section>
+    <section id="results" style="display: none;">
+      <h2>결과</h2>
+      <div id="current-time">
+        <h3>현재 시각</h3>
+        <p><span id="current-time-display"></span></p>
+      </div>
+      <div id="subway-results">
+        <h3>출발역 지하철 도착 정보</h3>
+        <ul id="subway-info-list"></ul>
+      </div>
+      <div id="arrival-results">
+        <h3>도착 시간 및 소요 시간</h3>
+        <p>예상 소요 시간: <span id="travel-time"></span></p>
+        <p>예상 도착 시간: <span id="expected-arrival-time"></span></p>
+      </div>
+      <div id="weather-results">
+        <h3>도착역 날씨 정보</h3>
+        <p>온도: <span id="temperature"></span>°C</p>
+        <p>날씨: <img id="weather-icon" class="weather-icon" src="" alt="날씨 아이콘"> <span id="weather-condition"></span></p>
+      </div>
+    </section>
+    <section id="Lane">
+      <h2>노선도</h2>
+        <div class="lane-container">
+          <a href="#lane1" class="lane-link"><img src="/image/lane1.png" alt="1호선" class="lane-image"></a>
+          <a href="#lane2" class="lane-link"><img src="/image/lane2.png" alt="2호선" class="lane-image"></a>
+          <a href="#lane3" class="lane-link"><img src="/image/lane3.png" alt="3호선" class="lane-image"></a>
+          <a href="#lane4" class="lane-link"><img src="/image/lane4.png" alt="4호선" class="lane-image"></a>
+          <a href="#lane5" class="lane-link"><img src="/image/lane5.png" alt="5호선" class="lane-image"></a>
+          <a href="#lane6" class="lane-link"><img src="/image/lane6.png" alt="6호선" class="lane-image"></a>
+          <a href="#lane7" class="lane-link"><img src="/image/lane7.png" alt="7호선" class="lane-image"></a>
+          <a href="#lane8" class="lane-link"><img src="/image/lane8.png" alt="8호선" class="lane-image"></a>
+        </div>
+    </section>
+    <div id="lane1" class="lightbox">
+      <a href="#" class="close">&times;</a>
+      <img src="/image/lane1.png" alt="1호선 확대">
     </div>
-  </section>
-  
-  <section id="search">
-    <h2>출발역과 도착역을 입력하세요</h2>
-    <form id="search-form">
-      <label for="departure">출발역:</label>
-      <input type="text" id="departure" name="departure" required>
-      <input type="number" min="1" max="8" id="departure-line" name="departure-line" required>호선
-      <label for="arrival">도착역:</label>
-      <input type="text" id="arrival" name="arrival" required>
-      <label for="transferStation">환승역:</label>
-      <input type="text" id="transferStation" name="transferStation">
-      <button type="submit">조회</button>
-    </form>
-  </section>
-
-  <section id="results" style="display: none;">
-  <h2>결과</h2>
-
-  <!-- 출발역 실시간 도착 정보 -->
-  <div id="subway-results">
-    <h3>출발역 지하철 도착 정보</h3>
-    <ul id="subway-info-list"></ul>
-  </div>
-
-  <!-- 도착역 예상 도착 시간 -->
-  <div id="arrival-results">
-    <h3>도착역 예상 도착 시간</h3>
-    <p>예상 도착 시간: <span id="expected-time"></span></p>
-  </div>
-
-  <!-- 도착역 날씨 정보 -->
-  <div id="weather-results">
-    <h3>도착역 날씨 정보</h3>
-    <p>온도: <span id="temperature"></span>°C</p>
-    <p>날씨: <span id="weather-condition"></span></p>
-  </div>
-</section>
-
-  <script>
-    const form = document.getElementById('search-form');
-    form.addEventListener('submit', async (event) => {
-      event.preventDefault();
-
-      const departure = document.getElementById('departure').value.trim();
-      const arrival = document.getElementById('arrival').value.trim();
-
-      try {
-        const response = await axios.get(`/apiData/${departure}/${arrival}`);
-        const { weather, subway, expectedArrivalTime } = response.data;
-
-        // 날씨 정보 업데이트
-        document.getElementById('temperature').textContent = weather.temperature || 'N/A';
-        document.getElementById('weather-condition').textContent = weather.isRaining ? '🌧️ 비' : '☀️ 맑음';
-
-        // 출발역 지하철 도착 정보 업데이트
-        const subwayInfoList = document.getElementById('subway-info-list');
-        subwayInfoList.innerHTML = subway.map(train => `
-          <li>${train.trainLine} - ${train.destination} - ${train.arrivalTime}</li>
-        `).join('');
-
-        // 도착역 예상 도착 시간 업데이트
-        document.getElementById('expected-time').textContent = expectedArrivalTime || 'N/A';
-
-        // 결과 섹션 표시
-        document.getElementById('results').style.display = 'block';
-      } catch (error) {
-        alert('데이터를 가져오는 데 실패했습니다. 다시 시도해주세요.');
-        console.error(error);
-      }
-    });
-  </script>
-
-<section id="Lane">
-  <h2>노선도</h2>
-  <div class="lane-container">
-    <a href="#lane1" class="lane-link"><img src="/image/lane1.png" alt="1호선" class="lane-image"></a>
-    <a href="#lane2" class="lane-link"><img src="/image/lane2.png" alt="2호선" class="lane-image"></a>
-    <a href="#lane3" class="lane-link"><img src="/image/lane3.png" alt="3호선" class="lane-image"></a>
-    <a href="#lane4" class="lane-link"><img src="/image/lane4.png" alt="4호선" class="lane-image"></a>
-    <a href="#lane5" class="lane-link"><img src="/image/lane5.png" alt="5호선" class="lane-image"></a>
-    <a href="#lane6" class="lane-link"><img src="/image/lane6.png" alt="6호선" class="lane-image"></a>
-    <a href="#lane7" class="lane-link"><img src="/image/lane7.png" alt="7호선" class="lane-image"></a>
-    <a href="#lane8" class="lane-link"><img src="/image/lane8.png" alt="8호선" class="lane-image"></a>
-  </div>
-</section>
-
-  <div id="lane1" class="lightbox">
-    <a href="#" class="close">&times;</a>
-    <img src="/image/lane1.png" alt="1호선 확대">
-  </div>
-  <div id="lane2" class="lightbox">
-    <a href="#" class="close">&times;</a>
-    <img src="/image/lane2.png" alt="2호선 확대">
-  </div>
-  <div id="lane3" class="lightbox">
-    <a href="#" class="close">&times;</a>
-    <img src="/image/lane3.png" alt="3호선 확대">
-  </div>
-  <div id="lane4" class="lightbox">
-    <a href="#" class="close">&times;</a>
-    <img src="/image/lane4.png" alt="4호선 확대">
-  </div>
-  <div id="lane5" class="lightbox">
-    <a href="#" class="close">&times;</a>
-    <img src="/image/lane5.png" alt="5호선 확대">
-  </div>
-  <div id="lane6" class="lightbox">
-    <a href="#" class="close">&times;</a>
-    <img src="/image/lane6.png" alt="6호선 확대">
-  </div>
-  <div id="lane7" class="lightbox">
-    <a href="#" class="close">&times;</a>
-    <img src="/image/lane7.png" alt="7호선 확대">
-  </div>
-  <div id="lane8" class="lightbox">
-    <a href="#" class="close">&times;</a>
-    <img src="/image/lane8.png" alt="8호선 확대">
-  </div>
-
+    <div id="lane2" class="lightbox">
+      <a href="#" class="close">&times;</a>
+      <img src="/image/lane2.png" alt="2호선 확대">
+    </div>
+    <div id="lane3" class="lightbox">
+      <a href="#" class="close">&times;</a>
+      <img src="/image/lane3.png" alt="3호선 확대">
+    </div>
+    <div id="lane4" class="lightbox">
+      <a href="#" class="close">&times;</a>
+      <img src="/image/lane4.png" alt="4호선 확대">
+    </div>
+    <div id="lane5" class="lightbox">
+      <a href="#" class="close">&times;</a>
+      <img src="/image/lane5.png" alt="5호선 확대">
+    </div>
+    <div id="lane6" class="lightbox">
+      <a href="#" class="close">&times;</a>
+      <img src="/image/lane6.png" alt="6호선 확대">
+    </div>
+    <div id="lane7" class="lightbox">
+      <a href="#" class="close">&times;</a>
+      <img src="/image/lane7.png" alt="7호선 확대">
+    </div>
+    <div id="lane8" class="lightbox">
+      <a href="#" class="close">&times;</a>
+      <img src="/image/lane8.png" alt="8호선 확대">
+    </div>
+  </main>
   <footer>
     <p>weather API by <a href="https://www.data.go.kr/" target="_blank">공공 데이터포털</a></p>
     <p>subway API by <a href="https://data.seoul.go.kr/" target="_blank">서울 열린데이터 광장</a></p>
   </footer>
+  <script>
+    // 현재 시각(실시간 업데이트)
+    const updateCurrentTime = () => {
+      const now = new Date();
+      const timeString = now.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+      document.getElementById('current-time-display').textContent = timeString;
+    };
+    setInterval(updateCurrentTime, 1000);
+    
+    // 이벤트처리, api 데이터 처리
+    const form = document.getElementById('search-form');
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+    
+      const departure = document.getElementById('departure').value.trim();
+      const departureLine = document.getElementById('departure-line').value.trim();
+      const arrival = document.getElementById('arrival').value.trim();
+      const transferStation = document.getElementById('transferStation')?.value.trim();
+    
+      try {
+          const response = await axios.get(`/apiData/${departure}/${departureLine}/${arrival}/${transferStation || ''}`);
+          const { subway, travelTime, weather } = response.data;
+    
+          // 실시간 도착 정보
+          const subwayInfoList = document.getElementById('subway-info-list');
+          subwayInfoList.innerHTML = subway.map(train => `
+              <li>${train.direction} - ${train.firstArrivalMessage} (${train.arrivalTimeSeconds}초)</li>
+          `).join('');
+    
+          // 소요시간 및 도착 시간
+          const now = new Date();
+          const expectedArrivalTime = new Date(now.getTime() + travelTime * 1000);
+          const expectedTimeString = expectedArrivalTime.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+    
+          document.getElementById('travel-time').textContent = `${Math.floor(travelTime / 60)}분 ${travelTime % 60}초`;
+          document.getElementById('expected-arrival-time').textContent = expectedTimeString;
+    
+          // 날씨 정보
+          document.getElementById('temperature').textContent = weather.temperature || 'N/A';
+          document.getElementById('weather-condition').textContent = weather.isRaining ? '비' : '맑음';
+          document.getElementById('weather-icon').src = weather.isRaining ? '/image/iconRain.png' : '/image/iconSun.png';
+    
+          // 결과
+          document.getElementById('results').style.display = 'block';
+      } catch (error) {
+          alert('데이터를 가져오는 데 실패했습니다. 다시 시도해주세요.');
+          console.error(error);
+      }
+    });
+    
+    updateCurrentTime();
+    
+    // 회원 정보 수정
+    document.getElementById('updateForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+    
+      const currentPassword = document.getElementById('currentPassword').value.trim();
+      const newPassword = document.getElementById('newPassword').value.trim();
+      const confirmNewPassword = document.getElementById('confirmNewPassword').value.trim();
+    
+      try {
+        const response = await fetch('/user/update', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ currentPassword, newPassword, confirmNewPassword }),
+        });
+    
+        const result = await response.json();
+        if (response.ok) {
+          alert(result.message);
+          window.location.reload();
+        } else {
+          alert(result.error);
+        }
+      } catch (error) {
+        console.error('비밀번호 변경 중 오류:', error);
+        alert('비밀번호 변경 중 문제가 발생했습니다.');
+      }
+    });
+    // 회원정보 form 보이기
+    document.getElementById('updateFormButton').addEventListener('click', () => {
+      document.getElementById('update-section').style.display = 'block';
+    });
+
+    // form 숨기기
+    document.getElementById('cancelUpdate').addEventListener('click', () => {
+      document.getElementById('update-section').style.display = 'none';
+    });
+    
+    // 회원 탈퇴
+    document.getElementById('deleteAccountButton').addEventListener('click', async () => {
+        const confirmation = confirm('정말로 회원 탈퇴를 하시겠습니까?');
+        if (!confirmation) return;
+    
+        try {
+          const response = await fetch('/user/delete', { 
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          });
+    
+          if (response.ok) {
+            alert('회원 탈퇴가 완료되었습니다 이용해주셔서 감사합니다.');
+            window.location.href = '/login';
+          } else {
+            const { error } = await response.json();
+            alert(`회원 탈퇴 실패: ${error}`);
+          }
+        } catch (err) {
+          console.error('회원 탈퇴 요청 중 오류 발생:', err);
+          alert('회원 탈퇴 요청 중 오류가 발생했습니다.');
+        }
+      });
+    </script>
 </body>
 </html>
-
 
 <% if (error) { %>
   <script>alert("<%= error %>");</script>
