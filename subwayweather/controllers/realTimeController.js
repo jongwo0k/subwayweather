@@ -1,6 +1,7 @@
 require('dotenv').config();
 const axios = require('axios');
 
+// 실시간 도착정보 (출발역)
 const getRealTimeSubwayInfo = async (stationName) => {
     try {
         const subwayApiKey = process.env.SUBWAY_API_KEY;
@@ -15,7 +16,8 @@ const getRealTimeSubwayInfo = async (stationName) => {
         if (!data || data.length === 0) {
             throw new Error(`실시간 도착 정보를 가져올 수 없습니다: ${stationName}`);
         }
-
+        
+        // 데이터 추출
         const subwayInfo = data.map((item) => ({
             direction: item.trainLineNm,
             arrivalTimeSeconds: item.barvlDt,
