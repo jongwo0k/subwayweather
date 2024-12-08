@@ -25,6 +25,7 @@ app.use(express.static('public'));
 
 // Body-parser 설정
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 // 라우트 등록
 app.use(authRoutes);
