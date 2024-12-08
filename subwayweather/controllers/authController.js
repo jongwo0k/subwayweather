@@ -52,4 +52,58 @@ const logoutUser = (req, res) => {
   });
 };
 
-module.exports = { loginUser, signupUser, logoutUser };
+// 회원정보 수정
+const updateUser = async (req, res) => {
+  const { currentPassword, newPassword, confirmNewPassword } = req.body;
+
+  try {
+    const user = await User.findById(req.session.userId);
+
+
+    // 비밀번호 변경
+    if (currentPassword || newPassword || confirmNewPassword) {
+      if (!currentPassword || !newPassword || !confirmNewPassword) {
+        return res.status(400).json({ error: '모든 비밀번호 필드를 입력해주세요.' });
+      }
+
+      // 일치 확인
+      const isMatch = await bcrypt.compare(currentPassword, user.password);
+      if (!isMatch) {
+        return res.status(401).json({ error: '현재 비밀번호가 일치하지 않습니다.' });
+      }
+
+      if (newPassword !== confirmNewPassword) {
+        return res.status(400).json({ error: '새 비밀번호가 확인 비밀번호와 일치하지 않습니다.' });
+      }
+
+      user.password = await bcrypt.hash(newPassword, 10);
+    }
+
+    await user.save();
+
+    res.status(200).json({ message: '비밀 번호가 성공적으로 변경되었습니다.' });
+  } catch (error) {
+    console.error('회원 정보 수정 오류:', error);
+    res.status(500).json({ error: '비밀 변호 변경 중 오류가 발생했습니다.' });
+  }
+};
+
+// 회원탈퇴
+const deleteUser = async (req, res) => {
+  const userId = req.session.userId;
+  try {
+    const user = await User.findByIdAndDelete(userId);
+    if (!user) {
+      return res.status(404).send('사용자를 찾을 수 없습니다.');
+    }
+
+    req.session.destroy();
+    res.clearCookie('connect.sid');
+    res.status(200).send('회원 탈퇴가 완료되었습니다.');
+  } catch (error) {
+    console.error('회원 탈퇴 오류:', error);
+    res.status(500).send('회원 탈퇴 중 오류가 발생했습니다.');
+  }
+}
+
+module.exports = { loginUser, signupUser, logoutUser, updateUser, deleteUser };
