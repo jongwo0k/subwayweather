@@ -1,5 +1,5 @@
 const express = require('express');
-const { loginUser, signupUser, logoutUser } = require('../controllers/authController');
+const { loginUser, signupUser, logoutUser, updateUser, deleteUser } = require('../controllers/authController');
 const { isAuthenticated } = require('../middlewares/authMiddleware');
 const router = express.Router();
 const User = require('../models/userModel');
@@ -23,7 +23,7 @@ router.get('/logout', (req, res) => {
   });
 });
 
-// 로그인한 사용자만 접속
+// 로그인한 사용자만 메인 페이지 접속
 router.get('/main', isAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.session.userId);
@@ -33,12 +33,18 @@ router.get('/main', isAuthenticated, async (req, res) => {
     res.render('main', {title: 'SubwayWeather: Main', username: user.username, error: null });
   } catch (err) {
     console.error('사용자 조회 오류 : ', err);
-    res.status(500).send('server error');
+    res.status(500).send('사용자 조회 오류');
   }
 });
 
 // POST : 로그인, 회원가입
 router.post('/login', loginUser);
 router.post('/signup', signupUser);
+
+// PUT : 회원정보 수정(pw)
+router.put('/user/update', isAuthenticated, updateUser);
+
+// DELETE : 회원탈퇴
+router.delete('/user/delete', isAuthenticated, deleteUser);
 
 module.exports = router;
