@@ -10,12 +10,20 @@ h1 {
   color: aliceblue;
 }
 
-nav {
-  text-align: right;
+.nav-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin: 10px 0;
 }
 
-.nav-link {
+.nav-left,
+.nav-right {
+  display: flex;
+  align-items: center;
+}
+
+.nav-link, nav button {
   margin: 0 15px;
   color: white;
   text-decoration: none;
@@ -25,8 +33,77 @@ nav {
   border-radius: 5px;
 }
 
-.nav-link:hover {
+.nav-link:hover, nav button:hover {
   background-color: green;
+}
+
+#deleteAccountButton {
+  background-color: maroon;
+}
+
+#deleteAccountButton:hover {
+  background-color: red;
+}
+
+#update-section {
+  display: none;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid lavender;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: aliceblue;
+  width: 80%;
+  max-width: 500px;
+  text-align: center;
+}
+
+#update-section h2 {
+  margin-bottom: 15px;
+  font-size: 22px;
+  color: darkgreen;
+}
+
+#update-section form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#update-section label {
+  text-align: left;
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+#update-section input {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid lavender;
+  border-radius: 5px;
+}
+
+#update-section button {
+  padding: 10px 15px;
+  font-size: 16px;
+  color: white;
+  background-color: darkgreen;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+#update-section button:hover {
+  background-color: green;
+}
+
+#cancelUpdate {
+  background-color: maroon;
+}
+
+#cancelUpdate:hover {
+  background-color: red;
 }
 
 #slideImage {
@@ -90,7 +167,7 @@ nav {
 #search input {
   margin: 0 5px;
   padding: 5px;
-  border: 1px solid #ccc;
+  border: 1px solid aliceblue;
   border-radius: 4px;
 }
 
@@ -121,7 +198,7 @@ nav {
 .lane-image {
   height: 150px;
   cursor: pointer;
-  border: 1px solid #ccc;
+  border: 1px solid aliceblue;
   border-radius: 4px;
   transition: transform 0.3s ease-in-out;
 }
@@ -136,10 +213,10 @@ nav {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: black;
+  background-color: rgba(0, 0, 0, 0.8);
   padding: 1px;
   border-radius: 10px;
-  z-index: 1000;
+  z-index: 999;
 }
 
 .lightbox:target {
@@ -160,6 +237,51 @@ nav {
   font-size: 20px;
   text-decoration: none;
   margin-bottom: 10px;
+}
+
+#results {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid lavender;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: aliceblue;
+  width: 80%;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#results h2{
+  text-align: center;
+  color: darkgreen;
+}
+
+.weather-icon {
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+}
+
+#current-time {
+  text-align: center;
+  margin: 10px 0;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+#arrival-results p {
+  margin: 5px 0;
+}
+
+#weather-results p {
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 footer {
