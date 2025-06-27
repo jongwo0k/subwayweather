@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const mongoose = require('mongoose');
 const User = require('../models/userModel');
 
 // 로그인
@@ -13,6 +14,21 @@ const loginUser = async (req, res) => {
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
     return res.status(401).render('login', { error: '잘못된 비밀번호입니다.' });
+  }
+
+  const db = mongoose.connection.db;
+  const sessionCollection = db.collection('sessions');
+
+  const allSessions = await sessionCollection.find({}).toArray();
+  for (let sess of allSessions) {
+    try {
+      const data = JSON.parse(sess.session);
+      if (data.userId === user._id.toString()) {
+        await sessionCollection.deleteOne({ _id: sess._id });
+      }
+    } catch (err) {
+      console.error('세션 파싱 실패:', err);
+    }
   }
 
   req.session.userId = user._id;
