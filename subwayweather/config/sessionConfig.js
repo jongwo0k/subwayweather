@@ -7,6 +7,7 @@ const sessionConfig = {
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
+  rolling: true,
   store: MongoStore.create({
     mongoUrl: process.env.MONGO_URI,
     collectionName: 'sessions',
@@ -14,7 +15,7 @@ const sessionConfig = {
   // 쿠키
   cookie: {
     httpOnly: true,
-    maxAge: 1000 * 60 * 60 * 24, // 1일
+    maxAge: 1000 * 60 * 60 * 2, // 2시간
   },
 };
 
