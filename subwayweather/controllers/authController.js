@@ -16,9 +16,14 @@ const loginUser = async (req, res) => {
     return res.status(401).render('login', { error: '잘못된 비밀번호입니다.' });
   }
 
+  const currentUserId = user._id.toString();
   const db = mongoose.connection.db;
   const sessionCollection = db.collection('sessions');
 
+  await sessionCollection.deleteMany({ 
+    session: { $regex: new RegExp(`"userId":"${currentUserId}"`) } 
+  });
+  /*
   const allSessions = await sessionCollection.find({}).toArray();
   for (let sess of allSessions) {
     try {
@@ -30,6 +35,7 @@ const loginUser = async (req, res) => {
       console.error('세션 파싱 실패:', err);
     }
   }
+  */
 
   req.session.userId = user._id;
   res.redirect('/main');
